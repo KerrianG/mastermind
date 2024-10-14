@@ -2,6 +2,9 @@ package org.iut.mastermind.domain.proposition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static java.util.Collections.unmodifiableList;
 
 public class Reponse {
@@ -21,7 +24,6 @@ public class Reponse {
     // on construit le résultat en analysant chaque lettre
     // du mot proposé
     public void compare(String essai) {
-        resultat.clear();
         position = 0;
         for (int i = 0; i < essai.length(); i++) {
             resultat.add(evaluationCaractere(essai.charAt(i)));

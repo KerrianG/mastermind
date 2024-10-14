@@ -11,7 +11,6 @@ public class ServiceTirageMot {
 
     // retourne le mot à l'indice renvoyé par le service nombre aléatoire
     public String tirageMotAleatoire() {
-        int index = nbAleatoire.next(repository.nbMaxMots());
-        return repository.getMotByIndex(index);
+        return repository.getMotByIndex(nbAleatoire.next(repository.nbMaxMots()));
     }
 }
