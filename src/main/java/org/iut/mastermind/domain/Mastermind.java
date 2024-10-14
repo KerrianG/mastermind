@@ -26,25 +26,24 @@ public class Mastermind {
     // sinon on utilise le service de tirage aléatoire pour obtenir un mot
     // et on initialise une nouvelle partie et on la stocke
     public boolean nouvellePartie(Joueur joueur) {
-        Optional<Partie> partieEnCours = partieRepository.getPartieEnregistree(joueur);
-        if (isJeuEnCours(partieEnCours)) {
-            return false;
-        } else{
-            Partie nouvellePartie = Partie.create(joueur, serviceTirageMot.tirageMotAleatoire());
-            partieRepository.create(nouvellePartie);
-            return true;
-        }
+        return partieRepository.getPartieEnregistree(joueur)
+                .filter(partie -> !partie.isTerminee())
+                .map(partie -> false)
+                .orElseGet(() -> {
+                    Partie nouvellePartie = Partie.create(joueur, serviceTirageMot.tirageMotAleatoire());
+                    partieRepository.create(nouvellePartie);
+                    return true;
+                });
     }
 
     // on récupère éventuellement la partie enregistrée pour le joueur
     // si la partie n'est pas une partie en cours, on renvoie une erreur
     // sinon on retourne le resultat du mot proposé
     public ResultatPartie evaluation(Joueur joueur, String motPropose) {
-        Optional<Partie> partieEnCours = partieRepository.getPartieEnregistree(joueur);
-        if (!isJeuEnCours(partieEnCours)) {
-            return ResultatPartie.ERROR;
-        }
-        return calculeResultat(partieEnCours.get(), motPropose);
+        return partieRepository.getPartieEnregistree(joueur)
+                .filter(partie -> !partie.isTerminee())
+                .map(partie -> calculeResultat(partie, motPropose))
+                .orElse(ResultatPartie.ERROR);
     }
 
     // on évalue le résultat du mot proposé pour le tour de jeu
